@@ -82,17 +82,27 @@ app.post('/memory/:key', express.json(), async (req: Request, res: Response) => 
 });
 
 // GitHub endpoints
-app.get('/github/repo/:owner/:repo', async (req: Request, res: Response) => {
+app.get('/github/repo/:owner/:repo', async (req, res) => {
   try {
     const { owner, repo } = req.params;
-    const repository = await githubService.getRepository(owner, repo);
-    res.json(repository);
+    const data = await githubService.getRepository(owner, repo);
+    res.json(data);
   } catch (error: any) {
-    res.status(500).json({ error: error.message || 'Internal server error' });
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/github/repos/:owner', async (req: Request, res: Response) => {
+app.patch('/github/repo/:owner/:repo', async (req, res) => {
+  try {
+    const { owner, repo } = req.params;
+    const data = await githubService.updateRepository(owner, repo, req.body);
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/github/repos/:owner', async (req, res) => {
   try {
     const { owner } = req.params;
     const repositories = await githubService.listRepositories(owner);

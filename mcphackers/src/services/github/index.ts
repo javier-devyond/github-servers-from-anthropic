@@ -44,6 +44,19 @@ export class GitHubService {
     }
   }
 
+  async updateRepository(owner: string, repo: string, data: { private?: boolean; name?: string; description?: string }) {
+    try {
+      const response = await this.checkAuth().repos.update({
+        owner,
+        repo,
+        ...data,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Failed to update repository: ${error.message}`);
+    }
+  }
+
   async listRepositories(owner: string) {
     try {
       const response = await this.checkAuth().repos.listForUser({
