@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { PostgresService } from './services/postgres';
 import { RedisService } from './services/redis';
 import { MemoryService } from './services/memory';
-import GitHubService from './services/github';
+import { GitHubService } from './services/github';
 import type { IGitHubService } from './services/github/types';
 import cors from 'cors';
 
