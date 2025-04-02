@@ -20,7 +20,7 @@ app.use(cors());
 const postgresService = new PostgresService();
 const redisService = new RedisService();
 const memoryService = new MemoryService();
-const githubService: IGitHubService = new GitHubService();
+const githubService = new GitHubService();
 
 // Initialize services
 async function initializeServices() {
