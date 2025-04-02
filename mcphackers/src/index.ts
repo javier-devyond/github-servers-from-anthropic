@@ -4,12 +4,16 @@ import { PostgresService } from './services/postgres';
 import { RedisService } from './services/redis';
 import { MemoryService } from './services/memory';
 import { GitHubService } from './services/github';
+import cors from 'cors';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
+
+// Enable CORS
+app.use(cors());
 
 // Initialize services
 const postgresService = new PostgresService();
@@ -24,6 +28,26 @@ async function initializeServices() {
   await memoryService.initialize();
   await githubService.initialize();
 }
+
+// SSE endpoint for Cursor MCP
+app.get('/sse', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  // Send initial connection message
+  res.write('data: {"type":"connection","status":"connected"}\n\n');
+
+  // Keep the connection alive
+  const interval = setInterval(() => {
+    res.write('data: {"type":"ping"}\n\n');
+  }, 30000);
+
+  // Clean up on client disconnect
+  req.on('close', () => {
+    clearInterval(interval);
+  });
+});
 
 // API endpoints
 app.get('/health', (_req: Request, res: Response) => {
@@ -82,27 +106,17 @@ app.post('/memory/:key', express.json(), async (req: Request, res: Response) => 
 });
 
 // GitHub endpoints
-app.get('/github/repo/:owner/:repo', async (req, res) => {
+app.get('/github/repo/:owner/:repo', async (req: Request, res: Response) => {
   try {
     const { owner, repo } = req.params;
-    const data = await githubService.getRepository(owner, repo);
-    res.json(data);
+    const repository = await githubService.getRepository(owner, repo);
+    res.json(repository);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message || 'Internal server error' });
   }
 });
 
-app.patch('/github/repo/:owner/:repo', async (req, res) => {
-  try {
-    const { owner, repo } = req.params;
-    const data = await githubService.updateRepository(owner, repo, req.body);
-    res.json(data);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/github/repos/:owner', async (req, res) => {
+app.get('/github/repos/:owner', async (req: Request, res: Response) => {
   try {
     const { owner } = req.params;
     const repositories = await githubService.listRepositories(owner);
