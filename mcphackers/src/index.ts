@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { PostgresService } from './services/postgres';
 import { RedisService } from './services/redis';
 import { MemoryService } from './services/memory';
-import { GitHubService } from './services/github';
+import { GitHubService, IGitHubService } from './services/github';
 import cors from 'cors';
 
 // Load environment variables
@@ -19,7 +19,7 @@ app.use(cors());
 const postgresService = new PostgresService();
 const redisService = new RedisService();
 const memoryService = new MemoryService();
-const githubService = new GitHubService();
+const githubService: IGitHubService = new GitHubService();
 
 // Initialize services
 async function initializeServices() {
