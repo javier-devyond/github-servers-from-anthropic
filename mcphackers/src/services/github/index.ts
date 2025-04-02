@@ -193,4 +193,7 @@ export class GitHubService implements IGitHubService {
       throw new Error(`Failed to get commit: ${error.message}`);
     }
   }
-} 
+}
+
+// Re-export the class as default
+export default GitHubService; 
