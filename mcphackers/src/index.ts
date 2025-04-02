@@ -35,12 +35,48 @@ app.get('/sse', (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
-  // Send initial connection message
-  res.write('data: {"type":"connection","status":"connected"}\n\n');
+  // Send initial schema message
+  const schema = {
+    jsonrpc: "2.0",
+    method: "initialize",
+    params: {
+      capabilities: {
+        github: {
+          repository: {
+            get: "/github/repo/:owner/:repo",
+            update: "/github/repo/:owner/:repo",
+            list: "/github/repos/:owner"
+          },
+          content: {
+            get: "/github/content/:owner/:repo/*",
+            update: "/github/content/:owner/:repo/*"
+          },
+          issues: {
+            create: "/github/issues/:owner/:repo",
+            list: "/github/issues/:owner/:repo"
+          },
+          search: {
+            code: "/github/search/code",
+            repositories: "/github/search/repos"
+          },
+          branches: {
+            create: "/github/branches/:owner/:repo",
+            list: "/github/branches/:owner/:repo"
+          },
+          commits: {
+            list: "/github/commits/:owner/:repo",
+            get: "/github/commits/:owner/:repo/:sha"
+          }
+        }
+      }
+    }
+  };
 
-  // Keep the connection alive
+  res.write(`data: ${JSON.stringify(schema)}\n\n`);
+
+  // Keep the connection alive with ping messages
   const interval = setInterval(() => {
-    res.write('data: {"type":"ping"}\n\n');
+    res.write(`data: ${JSON.stringify({ jsonrpc: "2.0", method: "ping" })}\n\n`);
   }, 30000);
 
   // Clean up on client disconnect
