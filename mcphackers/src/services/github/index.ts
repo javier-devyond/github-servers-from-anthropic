@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
-import { IGitHubService } from './types';
+import type { IGitHubService } from './types';
 
-export { IGitHubService } from './types';
+export type { IGitHubService } from './types';
 
 export class GitHubService implements IGitHubService {
   private octokit: Octokit;
