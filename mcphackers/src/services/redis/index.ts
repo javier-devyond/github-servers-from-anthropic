@@ -4,17 +4,14 @@ export class RedisService {
   private client;
 
   constructor() {
-    const host = process.env.REDIS_HOST;
-    const port = process.env.REDIS_PORT;
-    const password = process.env.REDIS_PASSWORD;
+    const redisUrl = process.env.REDIS_URL;
 
-    if (!host || !port) {
-      throw new Error('Redis configuration is missing. Please check your environment variables.');
+    if (!redisUrl) {
+      throw new Error('Redis URL is missing. Please check your environment variables.');
     }
 
     this.client = createClient({
-      url: `redis://${host}:${port}`,
-      password: password
+      url: redisUrl
     });
   }
 

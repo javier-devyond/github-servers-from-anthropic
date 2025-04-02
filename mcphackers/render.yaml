@@ -35,21 +35,11 @@ services:
           type: pserv
           name: mcphackers-postgres
           property: password
-      - key: REDIS_HOST
+      - key: REDIS_URL
         fromService:
           type: redis
           name: mcphackers-redis
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: mcphackers-redis
-          property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: redis
-          name: mcphackers-redis
-          property: password
+          property: connectionString
       - key: MEMORY_STORAGE_PATH
         value: /data/memory
       - key: LOG_LEVEL
