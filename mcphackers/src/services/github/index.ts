@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest';
 
-interface IGitHubService {
+export interface IGitHubService {
   initialize(): Promise<void>;
   getRepository(owner: string, repo: string): Promise<any>;
   listRepositories(owner: string): Promise<any>;
@@ -27,8 +27,7 @@ export class GitHubService implements IGitHubService {
     this.octokit = new Octokit({ auth: token });
   }
 
-  async initialize() {
-    // Verificar que el token es válido
+  async initialize(): Promise<void> {
     try {
       await this.octokit.users.getAuthenticated();
     } catch (error: any) {
@@ -36,8 +35,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  // Operaciones básicas de repositorio
-  async getRepository(owner: string, repo: string) {
+  async getRepository(owner: string, repo: string): Promise<any> {
     try {
       const response = await this.octokit.repos.get({
         owner,
@@ -49,7 +47,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async listRepositories(owner: string) {
+  async listRepositories(owner: string): Promise<any> {
     try {
       const response = await this.octokit.repos.listForUser({
         username: owner,
@@ -60,8 +58,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  // Operaciones de archivos
-  async getFileContent(owner: string, repo: string, path: string) {
+  async getFileContent(owner: string, repo: string, path: string): Promise<any> {
     try {
       const response = await this.octokit.repos.getContent({
         owner,
@@ -74,9 +71,8 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async createOrUpdateFile(owner: string, repo: string, path: string, content: string, message: string) {
+  async createOrUpdateFile(owner: string, repo: string, path: string, content: string, message: string): Promise<any> {
     try {
-      // Primero intentamos obtener el archivo existente para obtener su SHA
       let sha: string | undefined;
       try {
         const response = await this.octokit.repos.getContent({
@@ -91,7 +87,6 @@ export class GitHubService implements IGitHubService {
         // Si el archivo no existe, continuamos sin SHA
       }
 
-      // Crear o actualizar el archivo
       const response = await this.octokit.repos.createOrUpdateFileContents({
         owner,
         repo,
@@ -106,8 +101,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  // Operaciones de issues
-  async createIssue(owner: string, repo: string, title: string, body: string) {
+  async createIssue(owner: string, repo: string, title: string, body: string): Promise<any> {
     try {
       const response = await this.octokit.issues.create({
         owner,
@@ -121,7 +115,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async listIssues(owner: string, repo: string) {
+  async listIssues(owner: string, repo: string): Promise<any> {
     try {
       const response = await this.octokit.issues.listForRepo({
         owner,
@@ -133,8 +127,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  // Operaciones de búsqueda
-  async searchCode(query: string) {
+  async searchCode(query: string): Promise<any> {
     try {
       const response = await this.octokit.search.code({
         q: query,
@@ -145,7 +138,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async searchRepositories(query: string) {
+  async searchRepositories(query: string): Promise<any> {
     try {
       const response = await this.octokit.search.repos({
         q: query,
@@ -156,17 +149,14 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  // Operaciones de branches
-  async createBranch(owner: string, repo: string, branch: string, fromBranch: string = 'main') {
+  async createBranch(owner: string, repo: string, branch: string, fromBranch: string = 'main'): Promise<any> {
     try {
-      // Obtener la referencia del branch base
       const baseRef = await this.octokit.git.getRef({
         owner,
         repo,
         ref: `heads/${fromBranch}`,
       });
 
-      // Crear el nuevo branch
       const response = await this.octokit.git.createRef({
         owner,
         repo,
@@ -179,7 +169,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async listBranches(owner: string, repo: string) {
+  async listBranches(owner: string, repo: string): Promise<any> {
     try {
       const response = await this.octokit.repos.listBranches({
         owner,
@@ -191,8 +181,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  // Operaciones de commits
-  async listCommits(owner: string, repo: string, branch: string = 'main') {
+  async listCommits(owner: string, repo: string, branch: string = 'main'): Promise<any> {
     try {
       const response = await this.octokit.repos.listCommits({
         owner,
@@ -205,7 +194,7 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async getCommit(owner: string, repo: string, sha: string) {
+  async getCommit(owner: string, repo: string, sha: string): Promise<any> {
     try {
       const response = await this.octokit.repos.getCommit({
         owner,
