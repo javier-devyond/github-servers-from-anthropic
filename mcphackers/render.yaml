@@ -1,0 +1,69 @@
+services:
+  # Web service
+  - type: web
+    name: mcphackers-api
+    env: docker
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: POSTGRES_HOST
+        fromService:
+          type: pserv
+          name: mcphackers-postgres
+          property: host
+      - key: POSTGRES_PORT
+        fromService:
+          type: pserv
+          name: mcphackers-postgres
+          property: port
+      - key: POSTGRES_DB
+        fromService:
+          type: pserv
+          name: mcphackers-postgres
+          property: database
+      - key: POSTGRES_USER
+        fromService:
+          type: pserv
+          name: mcphackers-postgres
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromService:
+          type: pserv
+          name: mcphackers-postgres
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: mcphackers-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: mcphackers-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: mcphackers-redis
+          property: password
+      - key: MEMORY_STORAGE_PATH
+        value: /data/memory
+      - key: LOG_LEVEL
+        value: info
+
+  # PostgreSQL service
+  - type: pserv
+    name: mcphackers-postgres
+    env: postgres
+    plan: starter
+    ipAllowList: []
+
+  # Redis service
+  - type: redis
+    name: mcphackers-redis
+    plan: starter
+    ipAllowList: [] 

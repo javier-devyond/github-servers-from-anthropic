@@ -1,0 +1,40 @@
+import { createClient } from 'redis';
+
+export class RedisService {
+  private client;
+
+  constructor() {
+    this.client = createClient({
+      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+      password: process.env.REDIS_PASSWORD
+    });
+  }
+
+  async initialize() {
+    await this.client.connect();
+  }
+
+  async get(key: string) {
+    return await this.client.get(key);
+  }
+
+  async set(key: string, value: string, ttl?: number) {
+    if (ttl) {
+      await this.client.setEx(key, ttl, value);
+    } else {
+      await this.client.set(key, value);
+    }
+  }
+
+  async del(key: string) {
+    await this.client.del(key);
+  }
+
+  async exists(key: string) {
+    return await this.client.exists(key);
+  }
+
+  async shutdown() {
+    await this.client.quit();
+  }
+} 
