@@ -49,7 +49,9 @@ export class GitHubService {
       const response = await this.checkAuth().repos.update({
         owner,
         repo,
-        ...data,
+        private: data.private,
+        name: data.name,
+        description: data.description,
       });
       return response.data;
     } catch (error: any) {
