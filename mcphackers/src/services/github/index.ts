@@ -136,12 +136,12 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async createBranch(owner: string, repo: string, branch: string, fromBranch: string = 'main'): Promise<any> {
+  async createBranch(owner: string, repo: string, branch: string, fromBranch?: string): Promise<any> {
     try {
       const baseRef = await this.octokit.git.getRef({
         owner,
         repo,
-        ref: `heads/${fromBranch}`,
+        ref: `heads/${fromBranch || 'main'}`,
       });
 
       const response = await this.octokit.git.createRef({
@@ -168,12 +168,12 @@ export class GitHubService implements IGitHubService {
     }
   }
 
-  async listCommits(owner: string, repo: string, branch: string = 'main'): Promise<any> {
+  async listCommits(owner: string, repo: string, branch?: string): Promise<any> {
     try {
       const response = await this.octokit.repos.listCommits({
         owner,
         repo,
-        sha: branch,
+        sha: branch || 'main',
       });
       return response.data;
     } catch (error: any) {
